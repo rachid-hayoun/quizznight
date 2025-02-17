@@ -1,0 +1,90 @@
+/* Styles globaux */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #8BA4A5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #E5924A;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    border-radius: 0 0 20px 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 28px;
+    color: #E5924A;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-section {
+    background-color: #FFFFFF;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    font-size: 16px;
+    color: #333;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #8BA4A5;
+    border-radius: 10px;
+    outline: none;
+}
+
+input[type="submit"] {
+    background-color: #E5924A;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #D07F3A;
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 10px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+}

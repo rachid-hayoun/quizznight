@@ -1,4 +1,5 @@
 <?php
+// Connexion à la base de données et gestion des utilisateurs
 class Database {
     private $host = 'localhost';
     private $dbname = 'quizz night';
@@ -6,13 +7,13 @@ class Database {
     private $password = '';
     private $charset = 'utf8';
     private $pdo;
+
     public function connect() {
         if ($this->pdo === null) {
             try {
                 $dsn = "mysql:host=$this->host;dbname=$this->dbname;charset=$this->charset";
                 $this->pdo = new PDO($dsn, $this->username, $this->password);
                 $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                
             } catch (PDOException $e) {
                 die('Erreur de connexion à la base de données : ' . $e->getMessage());
             }
@@ -20,14 +21,17 @@ class Database {
         return $this->pdo;
     }
 }
+
 $db = new Database();
 $mysqlClient = $db->connect();
+
 class User {
     private $db;
 
     public function __construct($db) {
         $this->db = $db;
     }
+
     public function register($nom, $prenom, $mail, $numero, $identifiant, $mdp) {
         $mdpHash = password_hash($mdp, PASSWORD_DEFAULT);
         try {
@@ -40,6 +44,7 @@ class User {
             return 'Erreur lors de l\'inscription : ' . $e->getMessage();
         }
     }
+
     public function login($identifiant, $mdp) {
         try {
             $query = 'SELECT * FROM logs WHERE utilisateur = ?';
@@ -50,68 +55,56 @@ class User {
             if ($user && password_verify($mdp, $user['creermotdepasse'])) {
                 return true;
             } else {
-                return "";
+                return false;
             }
         } catch (Exception $e) {
             return 'Erreur lors de la connexion : ' . $e->getMessage();
         }
     }
 }
-$user = new User($mysqlClient);
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['inscription'])) {
-        $nom = $_POST['nom'];
-        $prenom = $_POST['prenom'];
-        $mail = $_POST['mail'];
-        $numero = $_POST['numero'];
-        $identifiant = $_POST['identifiant'];
-        $mdp = $_POST['creermotdepasse'];
-        $result = $user->register($nom, $prenom, $mail, $numero, $identifiant, $mdp);
 
-        if ($result === true) {
-            header('Location: connexion.php');
+$user = new User($mysqlClient);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['connexion'])) {
+        $identifiant_connexion = $_POST['identifiant_connexion'];
+        $motdepasse_connexion = $_POST['motdepasse_connexion'];
+
+        $result = $user->login($identifiant_connexion, $motdepasse_connexion);
+
+        if ($result) {
+            header('Location: crud.php');
             exit();
         } else {
-            echo $result;  
+            echo "<p style='color:red;'>Identifiant ou mot de passe incorrect.</p>";
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="accueil2.css">
-    <title>Page d'Inscription / Connexion</title>
+    <link rel="stylesheet" href="connexion.css">
+    <title>Connexion à Quizz Night</title>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Inscription à Quizz Night</h1>
+            <h1>Connexion à Quizz Night</h1>
         </header>
         <section class="form-section">
-            <h2>Créez un compte</h2>
+            <h2>Se connecter</h2>
             <form action="" method="post" class="registration-form">
-                <label for="nom">Nom :</label>
-                <input type="text" id="nom" name="nom" required>
+                <label for="identifiant_connexion">Identifiant :</label>
+                <input type="text" id="identifiant_connexion" name="identifiant_connexion" required>
 
-                <label for="prenom">Prénom :</label>
-                <input type="text" id="prenom" name="prenom" required>
+                <label for="motdepasse_connexion">Mot de passe :</label>
+                <input type="password" id="motdepasse_connexion" name="motdepasse_connexion" required>
 
-                <label for="mail">Email :</label>
-                <input type="email" id="mail" name="mail" required>
-
-                <label for="numero">Numéro :</label>
-                <input type="tel" id="numero" name="numero">
-
-                <label for="identifiant">Identifiant :</label>
-                <input type="text" id="identifiant" name="identifiant" required>
-
-                <label for="creermotdepasse">Mot de passe :</label>
-                <input type="password" id="creermotdepasse" name="creermotdepasse" required>
-
-                <input type="submit" name="inscription" value="S'inscrire">
+                <input type="submit" name="connexion" value="Se connecter">
             </form>
         </section>
     </div>
